@@ -1,0 +1,28 @@
+linker>
+  <assembly fullname="System.Web.Services">
+    <type fullname="System.Web.Services.Protocols.SoapTypeStubInfo" preserve="all"/>
+    <type fullname="System.Web.Services.Configuration.WebServicesConfigurationSectionHandler" preserve="all"/>
+ 
+  </assembly>
+ 
+  <assembly fullname="System" preserve="all"/>
+  <assembly fullname="System.Web.Services" preserve ="all"/>
+  <assembly fullname="System.Web" preserve ="all"/>
+ 
+ 
+  <assembly fullname="System">
+    <type fullname="System.Net.Configuration.WebRequestModuleHandler" preserve="all"/>
+    <type fullname="System.Net.HttpRequestCreator" preserve="all"/>
+    <type fullname="System.Net.FileWebRequestCreator" preserve="all"/>
+  </assembly>
+ 
+  <assembly fullname="mscorlib">
+    <type fullname="System.AppDomain" preserve="fields"/>
+    <type fullname="System.InvalidOperationException" preserve="fields">
+      <method signature="System.Void .ctor()"/>
+    </type>
+    <type fullname="System.Object" preserve="nothing">
+      <method name="Finalize"/>
+    </type>
+  </assembly>
+</linker>
