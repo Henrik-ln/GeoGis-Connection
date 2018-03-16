@@ -47,7 +47,7 @@ class MediatorDatabase
 
     public IEnumerator testGeoGis()
     {
-        float radius = 0.01f;
+        float radius = RadiusPicker.Instance.radius;
         float? latitude = null;
         float? longitude = null;
         while(latitude == null || longitude == null)

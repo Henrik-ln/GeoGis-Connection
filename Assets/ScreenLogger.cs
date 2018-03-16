@@ -22,6 +22,9 @@ public class ScreenLogger : MonoBehaviour {
     {
         scrollableText.text = scrollableText.text + "\n" + "\n" + text;
     }
-    
-	
+
+    public void clearText()
+    {
+        scrollableText.text = "";
+    }
 }
