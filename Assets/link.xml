@@ -1,13 +1,5 @@
 <linker>
-  <assembly fullname="System.Web.Services">
-    <type fullname="System.Web.Services.Protocols.SoapTypeStubInfo" preserve="all"/>
-    <type fullname="System.Web.Services.Configuration.WebServicesConfigurationSectionHandler" preserve="all"/>
- 
+  <assembly fullname="System">
+    <namespace fullname="System.Data.Communication" preserve="all"/>
   </assembly>
- 
-  <assembly fullname="System" preserve="all"/>
-  <assembly fullname="System.Web.Services" preserve ="all"/>
-  <assembly fullname="System.Web" preserve ="all"/>
-  <assembly fullname="System.Data" preserve ="all"/>
-
 </linker>
