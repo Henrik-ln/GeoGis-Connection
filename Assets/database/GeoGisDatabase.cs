@@ -12,6 +12,7 @@ class GeoGisDatabase
     private readonly string GEOGIS_DBNAME = "Goegis_TEST_db";
     private readonly string GEOGIS_USERNAME = "HenrikLodsgaardNielsen";
     private readonly string GEOGIS_PASSWORD = "HenrikLodsgaardNielsen1229";
+    private readonly string GEOGIS_WEBSERVICE_URL = "http://geogis.rsyd.dk/service.asmx";
 
     private MediatorDatabase mediatorDatabase;
     private Service client;
@@ -19,7 +20,7 @@ class GeoGisDatabase
     public GeoGisDatabase(MediatorDatabase mediatorDatabase)
     {
         this.mediatorDatabase = mediatorDatabase;
-        client = new Service();
+        client = new Service(GEOGIS_WEBSERVICE_URL);
 
     }
 
@@ -55,7 +56,7 @@ class GeoGisDatabase
             + " WHERE X1 >= " + (utmResult.Easting - radius).ToString(CultureInfo.InvariantCulture) + " AND X1 <= " + (utmResult.Easting + radius).ToString(CultureInfo.InvariantCulture)
             + " AND Y1 >= " + (utmResult.Northing - radius).ToString(CultureInfo.InvariantCulture) + " AND Y1 <= " + (utmResult.Northing + radius).ToString(CultureInfo.InvariantCulture);
 
-        Debug.Log("SQL: " + sql);
+        Debug.Log("GeoGis SQL: " + sql);
 
         String errMessage = null;
         DataSet dataset = client.GetDS(this.GEOGIS_DBNAME, this.GEOGIS_USERNAME, this.GEOGIS_PASSWORD, sql, ref errMessage);

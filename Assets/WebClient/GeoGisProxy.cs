@@ -99,7 +99,12 @@ public partial class Service : System.Web.Services.Protocols.SoapHttpClientProto
     public Service() {
         this.Url = "http://geogis.rsyd.dk/service.asmx";
     }
-    
+
+    public Service(string url)
+    {
+        this.Url = url;
+    }
+
     /// <remarks/>
     public event GetDBListCompletedEventHandler GetDBListCompleted;
     

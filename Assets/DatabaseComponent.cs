@@ -14,8 +14,8 @@ public class DatabaseComponent : MonoBehaviour {
     //JupiterReadClient jupiterClient;
     // Use this for initialization
     void Start () {
-        MediatorDatabase mediator = new MediatorDatabase();
-        StartCoroutine(mediator.testGeoGis());
+        
+        StartCoroutine(testDatabases());
         
         /*
         Debug.Log("Creating connection!");
@@ -30,10 +30,32 @@ public class DatabaseComponent : MonoBehaviour {
         */
     }
 
-    // Update is called once per frame
-    void Update()
+    public IEnumerator testDatabases()
     {
+        MediatorDatabase mediator = new MediatorDatabase();
 
+        float radius = RadiusPicker.Instance.radius;
+        //float radius = 0.005f;
+        float? latitude = null;
+        float? longitude = null;
+        while (latitude == null || longitude == null)
+        {
+            if (GPS.Instance.latitude != null && GPS.Instance.longitude != null)
+            {
+                latitude = GPS.Instance.latitude;
+                longitude = GPS.Instance.longitude;
+            }
+            else
+            {
+                yield return new WaitForSeconds(1);
+            }
+        }
+        //Location currentLocation = new Location(55.871675f, 9.886150f); //VIA location
+        Database.model.Location currentLocation = new Database.model.Location((float)latitude, (float)longitude);
+
+        mediator.testGeoGis(currentLocation, radius);
+        mediator.testJupiter(currentLocation, radius);
+        yield break;
     }
 
     /*

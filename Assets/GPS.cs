@@ -25,11 +25,11 @@ public class GPS : MonoBehaviour {
 
     private IEnumerator StartLocationService()
     {
-        ScreenLogger.Instance.addText("Location Finder started");
+        ScreenLogger.Instance.addText("Henter lokation...");
         // First, check if user has location service enabled
         if (!Input.location.isEnabledByUser)
         {
-            ScreenLogger.Instance.addText("Location service not enabled by user");
+            ScreenLogger.Instance.addText("Lokation tilladelse er ikke givet af brugeren...");
             emulateVIALocation();
             yield break;
         }
@@ -50,7 +50,7 @@ public class GPS : MonoBehaviour {
         // Service didn't initialize in 20 seconds
         if (maxWait < 1)
         {
-            ScreenLogger.Instance.addText("Timed out");
+            ScreenLogger.Instance.addText("Lokation Service timed out...");
             emulateVIALocation();
             yield break;
         }
@@ -58,19 +58,19 @@ public class GPS : MonoBehaviour {
         // Connection has failed
         if (Input.location.status == LocationServiceStatus.Failed)
         {
-            ScreenLogger.Instance.addText("LocationService Failed");
+            ScreenLogger.Instance.addText("Lokation Service fejlede...");
             emulateVIALocation();
             yield break;
         }
         else if (Input.location.status == LocationServiceStatus.Stopped)
         {
-            ScreenLogger.Instance.addText("LocationService never started");
+            ScreenLogger.Instance.addText("Lokation Service stoppet...");
             emulateVIALocation();
             yield break;
         }
         else if (Input.location.status == LocationServiceStatus.Initializing)
         {
-            ScreenLogger.Instance.addText("LocationService still initializing?!");
+            ScreenLogger.Instance.addText("Lokation Service initialisere stadig?!");
             emulateVIALocation();
             yield break;
         }
@@ -81,7 +81,7 @@ public class GPS : MonoBehaviour {
             {
                 DateTime dateTime = new DateTime(1970, 1, 1, 0, 0, 0).ToLocalTime();
                 dateTime = dateTime.AddSeconds(Input.location.lastData.timestamp);
-                ScreenLogger.Instance.addText("Location: Lat: " + Input.location.lastData.latitude + ", Lon: " + Input.location.lastData.longitude + ", Alti: " + Input.location.lastData.altitude + ", Accuracy: " + Input.location.lastData.horizontalAccuracy + ", Tid: " + dateTime.ToString());
+                //ScreenLogger.Instance.addText("Location: Lat: " + Input.location.lastData.latitude + ", Lon: " + Input.location.lastData.longitude + ", Alti: " + Input.location.lastData.altitude + ", Accuracy: " + Input.location.lastData.horizontalAccuracy + ", Tid: " + dateTime.ToString());
                 this.latitude = Input.location.lastData.latitude;
                 this.longitude = Input.location.lastData.longitude;
                 this.accuracy = Input.location.lastData.horizontalAccuracy;
@@ -94,14 +94,14 @@ public class GPS : MonoBehaviour {
         }
         else
         {
-            ScreenLogger.Instance.addText("LocationService Status Unknown");
+            ScreenLogger.Instance.addText("LocationService Status Unknown...");
             yield break;
         }
     }
 
     private void emulateVIALocation()
     {
-        ScreenLogger.Instance.addText("Emulating VIA location");
+        ScreenLogger.Instance.addText("Emulere virtuel lokation...");
         this.latitude = 55.871675f;
         this.longitude = 9.886150f;
         this.accuracy = 0;

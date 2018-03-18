@@ -12,6 +12,7 @@ class MediatorDatabase
     private int dbCount;
 
     private GeoGisDatabase geoGisDatabase;
+    private JupiterDatabase jupiterDatabase;
 
     private List<BoreholeType> boreholeTypes;
 
@@ -19,6 +20,7 @@ class MediatorDatabase
     {
         this.dbCount = 0;
         this.geoGisDatabase = new GeoGisDatabase(this);
+        this.jupiterDatabase = new JupiterDatabase(this);
 
         this.boreholeTypes = new List<BoreholeType>();
         //this.boreholeTypes = geoGisDatabase.getBoreholeTypes();
@@ -45,40 +47,41 @@ class MediatorDatabase
         return null;
     }
 
-    public IEnumerator testGeoGis()
+    public void testGeoGis(Location location, float radius)
     {
-        float radius = RadiusPicker.Instance.radius;
-        float? latitude = null;
-        float? longitude = null;
-        while(latitude == null || longitude == null)
-        {
-            if(GPS.Instance.latitude != null && GPS.Instance.longitude != null)
-            {
-                latitude = GPS.Instance.latitude;
-                longitude = GPS.Instance.longitude;
-                ScreenLogger.Instance.addText("Database Status: GPS Set");
-            }
-            else
-            {
-                ScreenLogger.Instance.addText("Database Status: No GPS yet");
-                yield return new WaitForSeconds(1);
-            }
-        }
-        //Location currentLocation = new Location(55.871675f, 9.886150f); //VIA location
-        Location currentLocation = new Location((float)latitude, (float)longitude);
-        List<Borehole> boreholes = geoGisDatabase.getBoreholes(currentLocation, radius);
-        //String sql = "select PointNo, X1, Y1 from points";
-        //geoGisDatabase.getDS("Goegis_TEST_db", sql);
-
+        ScreenLogger.Instance.addText("Henter GeoGis Boringer...");
+        List<Borehole> boreholes = geoGisDatabase.getBoreholes(location, radius);
         if (boreholes != null)
         {
             for (int i = 0; i < boreholes.Count; i++)
             {
-                ScreenLogger.Instance.addText(boreholes[i].ToString());
-                Debug.Log("GeoGIS - " + boreholes[i].ToString());
-                //Debug.Log("Distance: " + Utility.getDistanceBetweenLocations(currentLocation, boreholes[i].Location) + " m");
+                //Debug.Log("GeoGIS - " + boreholes[i].ToString());
+                ScreenLogger.Instance.addText("GeoGis - " + boreholes[i].ToString());
+                Debug.Log("Distance: " + Utility.getDistanceBetweenLocations(location, boreholes[i].Location) + " m");
             }
         }
-        yield break;
+        else
+        {
+            ScreenLogger.Instance.addText("Fejl ved hentning af GeoGis Boringer...");
+        }
+    }
+
+    public void testJupiter(Location location, float radius)
+    {
+        ScreenLogger.Instance.addText("Henter Jupiter Boringer...");
+        List<Borehole> boreholes = jupiterDatabase.getBoreholes(location, radius);
+        if (boreholes != null)
+        {
+            for (int i = 0; i < boreholes.Count; i++)
+            {
+                ScreenLogger.Instance.addText("Jupiter - " + boreholes[i].ToString());
+                //Debug.Log("Jupiter - " + boreholes[i].ToString());
+                Debug.Log("Distance: " + Utility.getDistanceBetweenLocations(location, boreholes[i].Location) + " m");
+            }
+        }
+        else
+        {
+            ScreenLogger.Instance.addText("Fejl ved hentning af Jupiter Boringer...");
+        }
     }
 }

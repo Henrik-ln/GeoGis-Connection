@@ -20,7 +20,16 @@ public class ScreenLogger : MonoBehaviour {
 
     public void addText(string text)
     {
-        scrollableText.text = scrollableText.text + "\n" + "\n" + text;
+        //Debug.Log("Future length: " + (scrollableText.text.Length + text.Length));
+        if (scrollableText.text.Length + text.Length > 16000)
+        {
+            //Debug.Log("Gonna exceed 65000 chars. No go");
+        }
+        else
+        {
+            scrollableText.text = scrollableText.text + "\n" + "\n" + text;
+        }
+        
     }
 
     public void clearText()
