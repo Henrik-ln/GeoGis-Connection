@@ -145,7 +145,7 @@ class GeoGisDatabase
                     if (latitude != null && longitude != null)
                     {
                         borehole.Location = new Location((float)latitude, (float)longitude);
-                        /*
+                        
                         if (locationQuality_Code != null)
                         {
                             borehole.Location.LocationQuality = mediatorDatabase.getLocationQuality(locationQuality_Code);
@@ -154,7 +154,7 @@ class GeoGisDatabase
                         {
                             borehole.Location.LocationMethod = mediatorDatabase.getLocationMethod(locationMethod_Code);
                         }
-                        */
+                        
                     }
                     boreholes.Add(borehole);
                 }
@@ -162,23 +162,36 @@ class GeoGisDatabase
         }
         return boreholes;
     }
-    /*
+    
     public List<BoreholeType> getBoreholeTypes()
     {
         List<BoreholeType> boreholeTypes = null;
         String sql = "SELECT Purpose, Description FROM PointPurposes WHERE Setup = 'DK'";
-        GetDSRequest getDSRequest = new GetDSRequest();
-        getDSRequest.Username = this.GEOGIS_USERNAME;
-        getDSRequest.Password = this.GEOGIS_PASSWORD;
-        getDSRequest.SQLSelect = sql;
-        getDSRequest.ErrMessage = "";
-        getDSRequest.DBName = this.GEOGIS_DBNAME;
 
-        GetDSResponse dsResponse = client.GetDS(getDSRequest);
-        if (dsResponse.ErrMessage == "")
+        String errMessage = null;
+        DataSet dataset = client.GetDS(this.GEOGIS_DBNAME, this.GEOGIS_USERNAME, this.GEOGIS_PASSWORD, sql, ref errMessage);
+
+        bool allGood = false;
+        if (errMessage == null)
+        {
+            allGood = true;
+        }
+        else if (errMessage != null)
+        {
+            if (errMessage == "")
+            {
+                allGood = true;
+            }
+            else
+            {
+                Debug.Log("ErrMessage: " + errMessage);
+            }
+        }
+
+        if(allGood)
         {
             boreholeTypes = new List<BoreholeType>();
-            foreach (System.Data.DataTable table in dsResponse.GetDSResult.Tables)
+            foreach (DataTable table in dataset.Tables)
             {
                 String[] columnNames = new String[table.Columns.Count];
                 for (int i = 0; i < table.Columns.Count; i++)
@@ -213,12 +226,9 @@ class GeoGisDatabase
                 }
             }
         }
-        else
-        {
-           Debug.Log("ErrMessage: " + dsResponse.ErrMessage);
-        }
+        
         return boreholeTypes;
-    }*/
+    }
 
     public List<string> getDatabaseNames()
     {

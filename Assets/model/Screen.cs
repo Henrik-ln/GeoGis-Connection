@@ -34,11 +34,22 @@ namespace Database.model
 
         public override string ToString()
         {
-            String returnString = "Screen [screenNo=" + screenNo + "top=" + top + ", bottom=" + bottom + ", diameter=" + diameter + ", diameterUnit=" + diameterUnit + ", waterLevels=";
+            String returnString = "Screen [";
+            if (screenNo != null)
+                returnString += "screenNo= " + screenNo;
+            if (top != null)
+                returnString += ", top= " + top;
+            if (bottom != null)
+                returnString += ", bottom= " + bottom;
+            if (diameter != null)
+                returnString += ", diameter= " + diameter;
+            if (diameterUnit != null)
+                returnString += ", diameterUnit= " + diameterUnit; 
             if (waterLevels != null)
             {
                 if (waterLevels.Count > 0)
                 {
+                    returnString += ", waterLevels=";
                     returnString += "{";
                     for (int i = 0; i < waterLevels.Count; i++)
                     {

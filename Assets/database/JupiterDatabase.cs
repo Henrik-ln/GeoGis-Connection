@@ -25,6 +25,7 @@ class JupiterDatabase : ProxyDatabase
 
     public List<Borehole> getBoreholes(Location currentLocation, double radius)
     {
+        Debug.Log("Jupiter - Henter boringer");
         List<Borehole> boreholes = null;
         SelectResult selectResult = null;
         try
@@ -81,28 +82,28 @@ class JupiterDatabase : ProxyDatabase
                                 switch (columnNames[i])
                                 {
                                     case "BOREHOLENO":
-                                        borehole.BoreholeNo = Convert.ToString(row[i]);
+                                        borehole.BoreholeNo = Convert.ToString(itemArray[i]);
                                         break;
                                     case "LATITUDE":
-                                        latitude = Convert.ToSingle(row[i]);
+                                        latitude = Convert.ToSingle(itemArray[i], new CultureInfo("da-DK"));
                                         break;
                                     case "LONGITUDE":
-                                        longitude = Convert.ToSingle(row[i]);
+                                        longitude = Convert.ToSingle(itemArray[i], new CultureInfo("da-DK"));
                                         break;
                                     case "ELEVATION":
-                                        borehole.ReferencePoint = Convert.ToSingle(row[i]);
+                                        borehole.ReferencePoint = Convert.ToSingle(itemArray[i], new CultureInfo("da-DK"));
                                         break;
                                     case "ZDVR90":
-                                        borehole.ReferencePointKote = Convert.ToSingle(row[i]);
+                                        borehole.ReferencePointKote = Convert.ToSingle(itemArray[i], new CultureInfo("da-DK"));
                                         break;
                                     case "PURPOSE":
-                                        borehole.BoreholeType = MediatorDatabase.getBoreholeType(Convert.ToString(row[i]));
+                                        borehole.BoreholeType = MediatorDatabase.getBoreholeType(Convert.ToString(itemArray[i]));
                                         break;
                                     case "LOCATQUALI":
-                                        locationQuality_Code = Convert.ToString(row[i]);
+                                        locationQuality_Code = Convert.ToString(itemArray[i]);
                                         break;
                                     case "LOCATMETHO":
-                                        locationMethod_Code = Convert.ToString(row[i]);
+                                        locationMethod_Code = Convert.ToString(itemArray[i]);
                                         break;
                                     default:
                                         Debug.Log("Unidentified Column!");
@@ -116,16 +117,16 @@ class JupiterDatabase : ProxyDatabase
                             borehole.Location = new Location((float)latitude, (float)longitude);
                             if (locationQuality_Code != null)
                             {
-                                //borehole.Location.LocationQuality = MediatorDatabase.getLocationQuality(locationQuality_Code);
+                                borehole.Location.LocationQuality = MediatorDatabase.getLocationQuality(locationQuality_Code);
                             }
                             if (locationMethod_Code != null)
                             {
-                                //borehole.Location.LocationMethod = MediatorDatabase.getLocationMethod(locationMethod_Code);
+                                borehole.Location.LocationMethod = MediatorDatabase.getLocationMethod(locationMethod_Code);
                             }
                         }
                         if (borehole.BoreholeNo != null)
                         {
-                            //borehole.Screens = getScreens(borehole.BoreholeNo);
+                            borehole.Screens = getScreens(borehole.BoreholeNo);
                         }
                         boreholes.Add(borehole);
                     }
@@ -147,11 +148,11 @@ class JupiterDatabase : ProxyDatabase
         }
         return boreholes;
     }
-    /*
-    public List<Screen> getScreens(String boreholeNo)
+    
+    public List<Database.model.Screen> getScreens(String boreholeNo)
     {
-        List<Screen> screens = null;
-        JupiterDatabaseReference.selectResult selectResult = null;
+        List<Database.model.Screen> screens = null;
+        SelectResult selectResult = null;
         try
         {
             String sql = "SELECT SCREENNO, INTAKENO, TOP, BOTTOM, DIAMETER, UNIT FROM SCREEN WHERE BOREHOLENO = '" + boreholeNo + "'";
@@ -159,49 +160,52 @@ class JupiterDatabase : ProxyDatabase
         }
         catch (System.ServiceModel.CommunicationException e)
         {
-            Console.Out.WriteLine("Too many results");
+            Debug.Log("Too many results");
         }
+
 
         if (selectResult != null)
         {
-            if (selectResult.resultset != null)
+            if (selectResult.DataSetResult != null)
             {
-                JupiterDatabaseReference.selectResultSet resultSet = selectResult.resultset;
-                JupiterDatabaseReference.dataRecord[] dataRecords = resultSet.records;
-                if (dataRecords != null)
+                foreach (DataTable table in selectResult.DataSetResult.Tables)
                 {
-                    String[] columnNames = resultSet.columnNames;
-                    String[] columnTypes = resultSet.columnTypes;
-                    screens = new List<Screen>();
-                    foreach (JupiterDatabaseReference.dataRecord dataRecord in dataRecords)
+                    String[] columnNames = new String[table.Columns.Count];
+                    for (int i = 0; i < table.Columns.Count; i++)
                     {
-                        object[] row = dataRecord.data;
-                        Screen screen = new Screen();
+                        columnNames[i] = table.Columns[i].ColumnName;
+                    }
+                    screens = new List<Database.model.Screen>();
+
+                    foreach (System.Data.DataRow row in table.Rows)
+                    {
+                        object[] itemArray = row.ItemArray;
+                        Database.model.Screen screen = new Database.model.Screen();
                         int? intakeNo = null;
-                        for (int i = 0; i < row.Length; i++)
+                        for (int i = 0; i < itemArray.Length; i++)
                         {
                             switch (columnNames[i])
                             {
                                 case "SCREENNO":
-                                    screen.ScreenNo = Convert.ToInt32(row[i]);
+                                    screen.ScreenNo = Convert.ToInt32(itemArray[i]);
                                     break;
                                 case "INTAKENO":
-                                    intakeNo = Convert.ToInt32(row[i]);
+                                    intakeNo = Convert.ToInt32(itemArray[i]);
                                     break;
                                 case "TOP":
-                                    screen.Top = Convert.ToSingle(row[i]);
+                                    screen.Top = Convert.ToSingle(itemArray[i], new CultureInfo("da-DK"));
                                     break;
                                 case "BOTTOM":
-                                    screen.Bottom = Convert.ToSingle(row[i]);
+                                    screen.Bottom = Convert.ToSingle(itemArray[i], new CultureInfo("da-DK"));
                                     break;
                                 case "DIAMETER":
-                                    screen.Diameter = Convert.ToSingle(row[i]);
+                                    screen.Diameter = Convert.ToSingle(itemArray[i], new CultureInfo("da-DK"));
                                     break;
                                 case "UNIT":
-                                    screen.DiameterUnit = Convert.ToString(row[i]);
+                                    screen.DiameterUnit = Convert.ToString(itemArray[i]);
                                     break;
                                 default:
-                                    Console.WriteLine("Unidentified Column!");
+                                    Debug.Log("Unidentified Column!");
                                     break;
                             }
                         }
@@ -212,32 +216,30 @@ class JupiterDatabase : ProxyDatabase
                         screens.Add(screen);
                     }
                 }
-                else
-                {
-                    Console.Out.WriteLine("DataRecords are null");
-                }
+            }
+            else
+            {
+                Debug.Log("DataSetRecords are null");
             }
 
-            if (selectResult.error != null)
+            if (selectResult.Error != null)
             {
-                JupiterDatabaseReference.elementError error = selectResult.error;
-                Console.Out.WriteLine("Error getting Screens");
-                Console.Out.WriteLine("Error Element Name: " + error.elementName);
-                Console.Out.WriteLine("Error Message: " + error.errorMesage);
+                string error = selectResult.Error;
+                Debug.Log("Error getting Screens: " + error);
             }
         }
         else
         {
-            Console.Out.WriteLine("SelectResult is null");
+            Debug.Log("SelectResult is null");
         }
         return screens;
     }
-    */
-    /*
+    
+    
     public List<WaterLevel> getWaterLevels(String boreholeNo, int intakeNo)
     {
         List<WaterLevel> waterLevels = null;
-        JupiterDatabaseReference.selectResult selectResult = null;
+        SelectResult selectResult = null;
         try
         {
             String sql = "SELECT TIMEOFMEAS, WATERLEVEL, REFPOINT FROM WATLEVEL WHERE BOREHOLENO = '" + boreholeNo + "' AND INTAKENO =" + intakeNo;
@@ -245,71 +247,72 @@ class JupiterDatabase : ProxyDatabase
         }
         catch (System.ServiceModel.CommunicationException e)
         {
-            Console.Out.WriteLine("Too many results");
+            Debug.Log("Too many results");
         }
 
         if (selectResult != null)
         {
-            if (selectResult.resultset != null)
+            if (selectResult.DataSetResult != null)
             {
-                JupiterDatabaseReference.selectResultSet resultSet = selectResult.resultset;
-                JupiterDatabaseReference.dataRecord[] dataRecords = resultSet.records;
-                if (dataRecords != null)
+                foreach (DataTable table in selectResult.DataSetResult.Tables)
                 {
-                    String[] columnNames = resultSet.columnNames;
-                    String[] columnTypes = resultSet.columnTypes;
-                    waterLevels = new List<WaterLevel>();
-                    foreach (JupiterDatabaseReference.dataRecord dataRecord in dataRecords)
+                    String[] columnNames = new String[table.Columns.Count];
+                    for (int i = 0; i < table.Columns.Count; i++)
                     {
-                        object[] row = dataRecord.data;
+                        columnNames[i] = table.Columns[i].ColumnName;
+                    }
+                    waterLevels = new List<WaterLevel>();
+
+                    foreach (System.Data.DataRow row in table.Rows)
+                    {
+                        object[] itemArray = row.ItemArray;
                         WaterLevel waterLevel = new WaterLevel();
-                        for (int i = 0; i < row.Length; i++)
+                        for (int i = 0; i < itemArray.Length; i++)
                         {
                             switch (columnNames[i])
                             {
                                 case "TIMEOFMEAS":
-                                    waterLevel.MeasurementDate = Convert.ToDateTime(row[i]);
+                                    waterLevel.MeasurementDate = Convert.ToDateTime(itemArray[i]);
                                     break;
                                 case "WATERLEVEL":
-                                    waterLevel.Measurement = Convert.ToSingle(row[i]);
+                                    waterLevel.Measurement = Convert.ToSingle(itemArray[i], new CultureInfo("da-DK"));
                                     break;
                                 case "REFPOINT":
-                                    waterLevel.ReferencePoint = this.MediatorDatabase.getReferencePoint(Convert.ToString(row[i]));
+                                    //waterLevel.ReferencePoint = this.MediatorDatabase.getReferencePoint(Convert.ToString(itemArray[i]));
                                     break;
                                 default:
-                                    Console.WriteLine("Unidentified Column!");
+                                    Debug.Log("Unidentified Column!");
                                     break;
                             }
                         }
                         waterLevels.Add(waterLevel);
                     }
                 }
-                else
-                {
-                    Console.Out.WriteLine("DataRecords are null");
-                }
+
+            }
+            else
+            {
+                Debug.Log("SelectResult's DataSetResult is null");
             }
 
-            if (selectResult.error != null)
+            if (selectResult.Error != null)
             {
-                JupiterDatabaseReference.elementError error = selectResult.error;
-                Console.Out.WriteLine("Error getting Water Level");
-                Console.Out.WriteLine("Error Element Name: " + error.elementName);
-                Console.Out.WriteLine("Error Message: " + error.errorMesage);
+                string error = selectResult.Error;
+                Debug.Log("Error getting Water Level: " + error);
             }
         }
         else
         {
-            Console.Out.WriteLine("SelectResult is null");
+            Debug.Log("SelectResult is null");
         }
         return waterLevels;
     }
-    */
-    /*
+    
+    
     public List<BoreholeType> getBoreholeTypes()
     {
-        List<BoreholeType> boreholeTypes = null;
-        JupiterDatabaseReference.selectResult selectResult = null;
+        List<BoreholeType> boreholeTypes = new List<BoreholeType>();
+        SelectResult selectResult = null;
 
         try
         {
@@ -318,71 +321,70 @@ class JupiterDatabase : ProxyDatabase
         }
         catch (System.ServiceModel.CommunicationException e)
         {
-            Console.Out.WriteLine("Too many results");
+            Debug.Log("Too many results");
         }
 
         if (selectResult != null)
         {
-            if (selectResult.resultset != null)
+            if (selectResult.DataSetResult != null)
             {
-                JupiterDatabaseReference.selectResultSet resultSet = selectResult.resultset;
-                JupiterDatabaseReference.dataRecord[] dataRecords = resultSet.records;
-                if (dataRecords != null)
+                foreach (DataTable table in selectResult.DataSetResult.Tables)
                 {
-                    String[] columnNames = resultSet.columnNames;
-                    String[] columnTypes = resultSet.columnTypes;
-                    boreholeTypes = new List<BoreholeType>();
-                    foreach (JupiterDatabaseReference.dataRecord dataRecord in dataRecords)
+                    String[] columnNames = new String[table.Columns.Count];
+                    for (int i = 0; i < table.Columns.Count; i++)
                     {
-                        object[] row = dataRecord.data;
+                        columnNames[i] = table.Columns[i].ColumnName;
+                    }
+
+                    foreach (System.Data.DataRow row in table.Rows)
+                    {
+                        object[] itemArray = row.ItemArray;
                         BoreholeType boreholeType = new BoreholeType();
-                        for (int i = 0; i < row.Length; i++)
+                        for (int i = 0; i < itemArray.Length; i++)
                         {
                             switch (columnNames[i])
                             {
                                 case "CODE":
-                                    boreholeType.Code = Convert.ToString(row[i]);
+                                    boreholeType.Code = Convert.ToString(itemArray[i]);
                                     break;
                                 case "SHORTTEXT":
-                                    boreholeType.ShortDescription = Convert.ToString(row[i]);
+                                    boreholeType.ShortDescription = Convert.ToString(itemArray[i]);
                                     break;
                                 case "LONGTEXT":
-                                    boreholeType.Description = Convert.ToString(row[i]);
+                                    boreholeType.Description = Convert.ToString(itemArray[i]);
                                     break;
                                 default:
-                                    Console.WriteLine("Unidentified Column!");
+                                    Debug.Log("Unidentified Column!");
                                     break;
                             }
                         }
                         boreholeTypes.Add(boreholeType);
                     }
                 }
-                else
-                {
-                    Console.Out.WriteLine("DataRecords are null");
-                }
+            }
+            else
+            {
+                Debug.Log("SelectResult's DataSetResult is null");
             }
 
-            if (selectResult.error != null)
+            if (selectResult.Error != null)
             {
-                JupiterDatabaseReference.elementError error = selectResult.error;
-                Console.Out.WriteLine("Error getting Borehole Types");
-                Console.Out.WriteLine("Error Element Name: " + error.elementName);
-                Console.Out.WriteLine("Error Message: " + error.errorMesage);
+                string error = selectResult.Error;
+                Debug.Log("Error getting Borehole Types: " + error);
             }
         }
         else
         {
-            Console.Out.WriteLine("SelectResult is null");
+            Debug.Log("SelectResult is null");
         }
         return boreholeTypes;
     }
-    */
-    /*
+    
+    
     public List<ReferencePoint> getReferencePoints()
     {
-        List<ReferencePoint> referencePoints = null;
-        JupiterDatabaseReference.selectResult selectResult = null;
+        List<ReferencePoint> referencePoints = new List<ReferencePoint>();
+        SelectResult selectResult = null;
 
         try
         {
@@ -391,68 +393,67 @@ class JupiterDatabase : ProxyDatabase
         }
         catch (System.ServiceModel.CommunicationException e)
         {
-            Console.Out.WriteLine("Too many results");
+            Debug.Log("Too many results");
         }
 
         if (selectResult != null)
         {
-            if (selectResult.resultset != null)
+            if (selectResult.DataSetResult != null)
             {
-                JupiterDatabaseReference.selectResultSet resultSet = selectResult.resultset;
-                JupiterDatabaseReference.dataRecord[] dataRecords = resultSet.records;
-                if (dataRecords != null)
+                foreach (DataTable table in selectResult.DataSetResult.Tables)
                 {
-                    String[] columnNames = resultSet.columnNames;
-                    String[] columnTypes = resultSet.columnTypes;
-                    referencePoints = new List<ReferencePoint>();
-                    foreach (JupiterDatabaseReference.dataRecord dataRecord in dataRecords)
+                    String[] columnNames = new String[table.Columns.Count];
+                    for (int i = 0; i < table.Columns.Count; i++)
                     {
-                        object[] row = dataRecord.data;
+                        columnNames[i] = table.Columns[i].ColumnName;
+                    }
+
+                    foreach (System.Data.DataRow row in table.Rows)
+                    {
+                        object[] itemArray = row.ItemArray;
                         ReferencePoint referencePoint = new ReferencePoint();
-                        for (int i = 0; i < row.Length; i++)
+                        for (int i = 0; i < itemArray.Length; i++)
                         {
                             switch (columnNames[i])
                             {
                                 case "CODE":
-                                    referencePoint.Code = Convert.ToString(row[i]);
+                                    referencePoint.Code = Convert.ToString(itemArray[i]);
                                     break;
                                 case "LONGTEXT":
-                                    referencePoint.Description = Convert.ToString(row[i]);
+                                    referencePoint.Description = Convert.ToString(itemArray[i]);
                                     break;
                                 default:
-                                    Console.WriteLine("Unidentified Column!");
+                                    Debug.Log("Unidentified Column!");
                                     break;
                             }
                         }
                         referencePoints.Add(referencePoint);
                     }
                 }
-                else
-                {
-                    Console.Out.WriteLine("DataRecords are null");
-                }
+            }
+            else
+            {
+                Debug.Log("SelectResult's DataSetResult is null");
             }
 
-            if (selectResult.error != null)
+            if (selectResult.Error != null)
             {
-                JupiterDatabaseReference.elementError error = selectResult.error;
-                Console.Out.WriteLine("Error getting ReferecePoints");
-                Console.Out.WriteLine("Error Element Name: " + error.elementName);
-                Console.Out.WriteLine("Error Message: " + error.errorMesage);
+                string error = selectResult.Error;
+                Debug.Log("Error getting ReferecePoints: " + error);
             }
         }
         else
         {
-            Console.Out.WriteLine("SelectResult is null");
+            Debug.Log("SelectResult is null");
         }
         return referencePoints;
     }
-    */
-    /*
+    
+    
     public List<LocationQuality> getLocationQualities()
     {
-        List<LocationQuality> locationQualities = null;
-        JupiterDatabaseReference.selectResult selectResult = null;
+        List<LocationQuality> locationQualities = new List<LocationQuality>();
+        SelectResult selectResult = null;
 
         try
         {
@@ -461,68 +462,67 @@ class JupiterDatabase : ProxyDatabase
         }
         catch (System.ServiceModel.CommunicationException e)
         {
-            Console.Out.WriteLine("Too many results");
+            Debug.Log("Too many results");
         }
 
         if (selectResult != null)
         {
-            if (selectResult.resultset != null)
+            if (selectResult.DataSetResult != null)
             {
-                JupiterDatabaseReference.selectResultSet resultSet = selectResult.resultset;
-                JupiterDatabaseReference.dataRecord[] dataRecords = resultSet.records;
-                if (dataRecords != null)
+                foreach (DataTable table in selectResult.DataSetResult.Tables)
                 {
-                    String[] columnNames = resultSet.columnNames;
-                    String[] columnTypes = resultSet.columnTypes;
-                    locationQualities = new List<LocationQuality>();
-                    foreach (JupiterDatabaseReference.dataRecord dataRecord in dataRecords)
+                    String[] columnNames = new String[table.Columns.Count];
+                    for (int i = 0; i < table.Columns.Count; i++)
                     {
-                        object[] row = dataRecord.data;
+                        columnNames[i] = table.Columns[i].ColumnName;
+                    }
+
+                    foreach (System.Data.DataRow row in table.Rows)
+                    {
+                        object[] itemArray = row.ItemArray;
                         LocationQuality locationQuality = new LocationQuality();
-                        for (int i = 0; i < row.Length; i++)
+                        for (int i = 0; i < itemArray.Length; i++)
                         {
                             switch (columnNames[i])
                             {
                                 case "CODE":
-                                    locationQuality.Code = Convert.ToString(row[i]);
+                                    locationQuality.Code = Convert.ToString(itemArray[i]);
                                     break;
                                 case "LONGTEXT":
-                                    locationQuality.Description = Convert.ToString(row[i]);
+                                    locationQuality.Description = Convert.ToString(itemArray[i]);
                                     break;
                                 default:
-                                    Console.WriteLine("Unidentified Column!");
+                                    Debug.Log("Unidentified Column!");
                                     break;
                             }
                         }
                         locationQualities.Add(locationQuality);
                     }
                 }
-                else
-                {
-                    Console.Out.WriteLine("DataRecords are null");
-                }
+            }
+            else
+            {
+                Debug.Log("SelectResult's DataSetResult is null");
             }
 
-            if (selectResult.error != null)
+            if (selectResult.Error != null)
             {
-                JupiterDatabaseReference.elementError error = selectResult.error;
-                Console.Out.WriteLine("Error getting LocationQualities");
-                Console.Out.WriteLine("Error Element Name: " + error.elementName);
-                Console.Out.WriteLine("Error Message: " + error.errorMesage);
+                string error = selectResult.Error;
+                Debug.Log("Error getting LocationQualities: " + error);
             }
         }
         else
         {
-            Console.Out.WriteLine("SelectResult is null");
+            Debug.Log("SelectResult is null");
         }
         return locationQualities;
     }
-    */
-    /*
+    
+    
     public List<LocationMethod> getLocationMethods()
     {
-        List<LocationMethod> locationMethods = null;
-        JupiterDatabaseReference.selectResult selectResult = null;
+        List<LocationMethod> locationMethods = new List<LocationMethod>();
+        SelectResult selectResult = null;
 
         try
         {
@@ -531,63 +531,62 @@ class JupiterDatabase : ProxyDatabase
         }
         catch (System.ServiceModel.CommunicationException e)
         {
-            Console.Out.WriteLine("Too many results");
+            Debug.Log("Too many results");
         }
 
         if (selectResult != null)
         {
-            if (selectResult.resultset != null)
+            if (selectResult.DataSetResult != null)
             {
-                JupiterDatabaseReference.selectResultSet resultSet = selectResult.resultset;
-                JupiterDatabaseReference.dataRecord[] dataRecords = resultSet.records;
-                if (dataRecords != null)
+                foreach (DataTable table in selectResult.DataSetResult.Tables)
                 {
-                    String[] columnNames = resultSet.columnNames;
-                    String[] columnTypes = resultSet.columnTypes;
-                    locationMethods = new List<LocationMethod>();
-                    foreach (JupiterDatabaseReference.dataRecord dataRecord in dataRecords)
+                    String[] columnNames = new String[table.Columns.Count];
+                    for (int i = 0; i < table.Columns.Count; i++)
                     {
-                        object[] row = dataRecord.data;
+                        columnNames[i] = table.Columns[i].ColumnName;
+                    }
+
+                    foreach (System.Data.DataRow row in table.Rows)
+                    {
+                        object[] itemArray = row.ItemArray;
                         LocationMethod locationMethod = new LocationMethod();
-                        for (int i = 0; i < row.Length; i++)
+                        for (int i = 0; i < itemArray.Length; i++)
                         {
                             switch (columnNames[i])
                             {
                                 case "CODE":
-                                    locationMethod.Code = Convert.ToString(row[i]);
+                                    locationMethod.Code = Convert.ToString(itemArray[i]);
                                     break;
                                 case "LONGTEXT":
-                                    locationMethod.Description = Convert.ToString(row[i]);
+                                    locationMethod.Description = Convert.ToString(itemArray[i]);
                                     break;
                                 default:
-                                    Console.WriteLine("Unidentified Column!");
+                                    Debug.Log("Unidentified Column!");
                                     break;
                             }
                         }
                         locationMethods.Add(locationMethod);
                     }
                 }
-                else
-                {
-                    Console.Out.WriteLine("DataRecords are null");
-                }
+            }
+            else
+            {
+                Debug.Log("SelectResult's DataSetResult is null");
             }
 
-            if (selectResult.error != null)
+            if (selectResult.Error != null)
             {
-                JupiterDatabaseReference.elementError error = selectResult.error;
-                Console.Out.WriteLine("Error getting LocationQualities");
-                Console.Out.WriteLine("Error Element Name: " + error.elementName);
-                Console.Out.WriteLine("Error Message: " + error.errorMesage);
+                string error = selectResult.Error;
+                Debug.Log("Error getting LocationQualities: " + error);
             }
         }
         else
         {
-            Console.Out.WriteLine("SelectResult is null");
+            Debug.Log("SelectResult is null");
         }
         return locationMethods;
     }
-    */
+    
 
     /*
             public void selectFromDatabase(String sql)
@@ -600,7 +599,7 @@ class JupiterDatabase : ProxyDatabase
                 }
                 catch (System.ServiceModel.CommunicationException e)
                 {
-                    Console.Out.WriteLine("Too many results");
+                    Debug.Log("Too many results");
                 }
 
                 if (selectResult != null)
@@ -621,28 +620,28 @@ class JupiterDatabase : ProxyDatabase
 
                                 for (int i = 0; i < row.Length; i++)
                                 {
-                                    Console.Out.WriteLine(columnNames[i] + " : " + columnTypes[i] + " = " + row[i]);
+                                    Debug.Log(columnNames[i] + " : " + columnTypes[i] + " = " + row[i]);
                                 }
-                                Console.Out.WriteLine();
+                                Debug.Log();
                             }
 
                         }
                         else
                         {
-                            Console.Out.WriteLine("DataRecords are null");
+                            Debug.Log("DataRecords are null");
                         }
                     }
 
                     if (selectResult.error != null)
                     {
                         JupiterDatabaseReference.elementError error = selectResult.error;
-                        Console.Out.WriteLine("Error Element Name: " + error.elementName);
-                        Console.Out.WriteLine("Error Message: " + error.errorMesage);
+                        Debug.Log("Error Element Name: " + error.elementName);
+                        Debug.Log("Error Message: " + error.errorMesage);
                     }
                 }
                 else
                 {
-                    Console.Out.WriteLine("SelectResult is null");
+                    Debug.Log("SelectResult is null");
                 }
 
 
@@ -652,20 +651,20 @@ class JupiterDatabase : ProxyDatabase
     public void readTables()
     {
         JupiterDatabaseReference.jupTable[] jupiterTables = jupiterClient.getJupTable();
-        Console.Out.WriteLine("START");
+        Debug.Log("START");
         for (int i = 0; i < jupiterTables.Length; i++)
         {
             if(jupiterTables[i].corrtablna.Contains("SAMPL"))
             {
-                //Console.Out.WriteLine("TableNo: " + jupiterTables[i].tableno);
-                //Console.Out.WriteLine("TableNoSpecified: " + jupiterTables[i].tablenoSpecified);
-                Console.Out.WriteLine("TableName: " + jupiterTables[i].tablename);
-                //Console.Out.WriteLine("mastkyflds: " + jupiterTables[i].mastkyflds);
-                //Console.Out.WriteLine("masttable: " + jupiterTables[i].masttable);
-                Console.Out.WriteLine("corrtablna: " + jupiterTables[i].corrtablna);
-                //Console.Out.WriteLine("TableType: " + jupiterTables[i].tabletype);
-                //Console.Out.WriteLine("TableTypeSpecified: " + jupiterTables[i].tabletypeSpecified);
-                Console.Out.WriteLine();
+                //Debug.Log("TableNo: " + jupiterTables[i].tableno);
+                //Debug.Log("TableNoSpecified: " + jupiterTables[i].tablenoSpecified);
+                Debug.Log("TableName: " + jupiterTables[i].tablename);
+                //Debug.Log("mastkyflds: " + jupiterTables[i].mastkyflds);
+                //Debug.Log("masttable: " + jupiterTables[i].masttable);
+                Debug.Log("corrtablna: " + jupiterTables[i].corrtablna);
+                //Debug.Log("TableType: " + jupiterTables[i].tabletype);
+                //Debug.Log("TableTypeSpecified: " + jupiterTables[i].tabletypeSpecified);
+                Debug.Log();
             }
 
 
@@ -677,14 +676,14 @@ class JupiterDatabase : ProxyDatabase
     public void readTableDescription(String tableName)
     {
         JupiterDatabaseReference.jupFieDe[] fieldDescriptions = jupiterClient.getJupFieDe(tableName);
-        Console.Out.WriteLine("START");
+        Debug.Log("START");
         for (int i = 0; i < fieldDescriptions.Length; i++)
         {
-            Console.Out.WriteLine("tablename: " + fieldDescriptions[i].tablename);
-            Console.Out.WriteLine("columnname: " + fieldDescriptions[i].columnname);
-            Console.Out.WriteLine("definition: " + fieldDescriptions[i].definition);
-            Console.Out.WriteLine("description: " + fieldDescriptions[i].description);
-            Console.Out.WriteLine();
+            Debug.Log("tablename: " + fieldDescriptions[i].tablename);
+            Debug.Log("columnname: " + fieldDescriptions[i].columnname);
+            Debug.Log("definition: " + fieldDescriptions[i].definition);
+            Debug.Log("description: " + fieldDescriptions[i].description);
+            Debug.Log();
 
         }
     }

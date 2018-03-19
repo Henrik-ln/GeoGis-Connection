@@ -27,7 +27,16 @@ namespace Database.model
 
         public override string ToString()
         {
-            return "BoreholeType [code=" + code + ",shortDescription=" + shortDescription + ", description=" + description + ", colorCode=" + colorCode;
+            string returnString = "BoreholeType [";
+            if (code != null)
+                returnString += "code = " + code;
+            if (shortDescription != null)
+                returnString += ", shortDescription=" + shortDescription;
+            if (description != null)
+                returnString += ", description=" + description;
+            if (colorCode != null)
+                returnString += ", colorCode=" + colorCode;
+            return returnString + "]";
         }
     }
 }

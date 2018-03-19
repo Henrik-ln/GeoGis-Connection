@@ -24,7 +24,14 @@ namespace Database.model
 
         public override string ToString()
         {
-            return "WaterLevel [measurement=" + measurement + ", referencePoint=" + referencePoint + ", measurementDate=" + measurementDate + "]";
+            string returnString = "WaterLevel [";
+            if (measurement != null)
+                returnString += "measurement = " + measurement;
+            if (referencePoint != null)
+                returnString += ", referencePoint=" + referencePoint;
+            if (measurementDate != null)
+                returnString += ", measurementDate=" + measurementDate;
+            return returnString + "]";
         }
     }
 }

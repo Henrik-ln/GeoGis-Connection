@@ -25,7 +25,7 @@ public class GPS : MonoBehaviour {
 
     private IEnumerator StartLocationService()
     {
-        ScreenLogger.Instance.addText("Henter lokation...");
+        ScreenLogger.Instance.addText("Finder bruger lokation...");
         // First, check if user has location service enabled
         if (!Input.location.isEnabledByUser)
         {

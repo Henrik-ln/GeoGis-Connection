@@ -13,10 +13,12 @@ public class DatabaseComponent : MonoBehaviour {
 
     //JupiterReadClient jupiterClient;
     // Use this for initialization
+    private MediatorDatabase mediatorDatabase;
+
     void Start () {
-        
+        mediatorDatabase = new MediatorDatabase();
+        StartCoroutine(initializeMediatorsLists());
         StartCoroutine(testDatabases());
-        
         /*
         Debug.Log("Creating connection!");
         jupiterClient = new JupiterReadClient(new BasicHttpBinding(),
@@ -30,12 +32,31 @@ public class DatabaseComponent : MonoBehaviour {
         */
     }
 
+    public IEnumerator initializeMediatorsLists()
+    {
+        ScreenLogger.Instance.addText("Henter Borings Typer fra Jupiter...");
+        yield return new WaitForSeconds(0.1f);
+        mediatorDatabase.BoreholeTypes = mediatorDatabase.JupiterDatabase.getBoreholeTypes();
+        //Dem der er i GeoGis men ikke Jupiter
+        ScreenLogger.Instance.addText("Henter Borings Typer fra GeoGis...");
+        yield return new WaitForSeconds(0.1f);
+        mediatorDatabase.addExtraGeoGisBoreholeTypes();
+        ScreenLogger.Instance.addText("Henter Reference Punkter fra Jupiter...");
+        yield return new WaitForSeconds(0.1f);
+        mediatorDatabase.ReferencePoints = mediatorDatabase.JupiterDatabase.getReferencePoints();
+        ScreenLogger.Instance.addText("Henter Lokation Kvaliteter fra Jupiter...");
+        yield return new WaitForSeconds(0.1f);
+        mediatorDatabase.LocationQualities = mediatorDatabase.JupiterDatabase.getLocationQualities();
+        ScreenLogger.Instance.addText("Henter Lokation Metoder fra Jupiter...");
+        yield return new WaitForSeconds(0.1f);
+        mediatorDatabase.LocationMethods = mediatorDatabase.JupiterDatabase.getLocationMethods();
+        yield break;
+    }
+
     public IEnumerator testDatabases()
     {
-        MediatorDatabase mediator = new MediatorDatabase();
-
+        Debug.Log("Test Databases Called!");
         float radius = RadiusPicker.Instance.radius;
-        //float radius = 0.005f;
         float? latitude = null;
         float? longitude = null;
         while (latitude == null || longitude == null)
@@ -47,14 +68,34 @@ public class DatabaseComponent : MonoBehaviour {
             }
             else
             {
-                yield return new WaitForSeconds(1);
+                Debug.Log("Waiting for GPS to initialize...");
+                yield return new WaitForSeconds(0.1f);
             }
         }
+        Debug.Log("Got User Location!");
         //Location currentLocation = new Location(55.871675f, 9.886150f); //VIA location
         Database.model.Location currentLocation = new Database.model.Location((float)latitude, (float)longitude);
 
-        mediator.testGeoGis(currentLocation, radius);
-        mediator.testJupiter(currentLocation, radius);
+        while(!mediatorDatabase.IsInitialized)
+        {
+            Debug.Log("Waiting for MediatorDatabase to initialize...");
+            yield return new WaitForSeconds(0.1f);
+        }
+
+        Debug.Log("Medaitor database initialized!");
+
+        //yieldsne nedenunder får den til at stoppe når CoRoutine bliver kaldt af ScreenLogger
+
+        //ScreenLogger.Instance.addText("Henter GeoGis Boringer...");
+        //yield return new WaitForSeconds(0.1f);
+        mediatorDatabase.testGeoGis(currentLocation, radius);
+        Debug.Log("Fik GeoGis!");
+
+        //ScreenLogger.Instance.addText("Henter Jupiter Boringer...");
+        //yield return new WaitForSeconds(0.1f);
+        mediatorDatabase.testJupiter(currentLocation, radius);
+        Debug.Log("Fik Jupiter!");
+        
         yield break;
     }
 

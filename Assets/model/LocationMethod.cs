@@ -21,7 +21,12 @@ namespace Database.model
 
         public override string ToString()
         {
-            return "LocationMethod [code=" + code + ", description=" + description + "]";
+            string returnString = "LocationMethod [";
+            if (code != null)
+                returnString += "code = " + code;
+            if (description != null)
+                returnString += ", description=" + description;
+            return returnString + "]";
         }
     }
 }

@@ -27,15 +27,17 @@ namespace Database.model
 
         public override string ToString()
         {
-            string returnString = "Location [x=" + x + ", longitude=" + y + ",  locationQuality =";
+            string returnString = "Location [x=" + x + ", longitude=" + y;
             if(locationQuality != null)
             {
-                returnString += locationQuality;
+                returnString += ", locationQuality =";
+                returnString += locationQuality.ToString();
             }
-            returnString += ", locationMethod=";
+            
             if (locationMethod != null)
             {
-                returnString += locationMethod;
+                returnString += ", locationMethod=";
+                returnString += locationMethod.ToString();
             }
             returnString += "]";
             return returnString;

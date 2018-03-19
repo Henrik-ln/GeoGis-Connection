@@ -47,16 +47,28 @@ namespace Database.model
 
         public override string ToString()
         {
-            String returnString = "Borehole [boreholeNo=" + boreholeNo + ", location=";
+            String returnString = "Borehole [ boreholeNo=" + boreholeNo;
             if(location!= null)
             {
-                returnString += location.ToString();
+                returnString += ", location=" + location.ToString();
             }
-            returnString += ", referencePoint=" + referencePoint + ", referencePointKote=" + referencePointKote + ", boreholeType=" + boreholeType + ", screens=";
-            if(screens!= null)
+            if(referencePoint != null)
+            {
+                returnString += ", referencePoint=" + referencePoint;
+            }
+            if(referencePointKote != null)
+            {
+                returnString += ", referencePointKote=" + referencePointKote;
+            }
+            if(boreholeType != null)
+            {
+                returnString += ", boreholeType=" + boreholeType.ToString();
+            }
+            if (screens != null)
             {
                 if (screens.Count > 0)
                 {
+                    returnString += ", screens=";
                     returnString += "{";
                     for (int i = 0; i < screens.Count; i++)
                     {
