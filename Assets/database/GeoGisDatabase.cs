@@ -52,11 +52,13 @@ class GeoGisDatabase
         LatLngUTMConverter.UTMResult utmResult = latLngUTMConverter.convertLatLngToUtm(currentLocation.X, currentLocation.Y);
         //Debug.Log(utmResult.ToString());
         //Debug.Log("Radius:" + radius);
-        String sql = "select PointNo, PublicNo, Purpose, X1, Y1, CoordinateMethod1, CoordinateQuality1, Z1, ZDVR90 from points"
-            + " WHERE X1 >= " + (utmResult.Easting - radius).ToString(CultureInfo.InvariantCulture) + " AND X1 <= " + (utmResult.Easting + radius).ToString(CultureInfo.InvariantCulture)
-            + " AND Y1 >= " + (utmResult.Northing - radius).ToString(CultureInfo.InvariantCulture) + " AND Y1 <= " + (utmResult.Northing + radius).ToString(CultureInfo.InvariantCulture);
+        String sql = "select PointNo, PublicNo, Purpose, X1, Y1, CoordinateMethod1, CoordinateQuality1, Z1, ZDVR90 from points" +
+            " WHERE X1 >= " + (utmResult.Easting - radius).ToString(CultureInfo.InvariantCulture) + 
+            " AND X1 <= " + (utmResult.Easting + radius).ToString(CultureInfo.InvariantCulture) + 
+            " AND Y1 >= " + (utmResult.Northing - radius).ToString(CultureInfo.InvariantCulture) + 
+            " AND Y1 <= " + (utmResult.Northing + radius).ToString(CultureInfo.InvariantCulture);
 
-        Debug.Log("GeoGis SQL: " + sql);
+        Debug.Log("GeoGis Boringer SQL: " + sql);
 
         String errMessage = null;
         DataSet dataset = client.GetDS(this.GEOGIS_DBNAME, this.GEOGIS_USERNAME, this.GEOGIS_PASSWORD, sql, ref errMessage);
@@ -167,7 +169,7 @@ class GeoGisDatabase
     {
         List<BoreholeType> boreholeTypes = null;
         String sql = "SELECT Purpose, Description FROM PointPurposes WHERE Setup = 'DK'";
-
+        Debug.Log("GeoGis Borings Typer SQL: " + sql);
         String errMessage = null;
         DataSet dataset = client.GetDS(this.GEOGIS_DBNAME, this.GEOGIS_USERNAME, this.GEOGIS_PASSWORD, sql, ref errMessage);
 

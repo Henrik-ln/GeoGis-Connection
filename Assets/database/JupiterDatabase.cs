@@ -31,9 +31,11 @@ class JupiterDatabase : ProxyDatabase
         try
         {
             String sql = "SELECT BOREHOLENO, LATITUDE, LONGITUDE, ELEVATION, ZDVR90, PURPOSE, LOCATQUALI, LOCATMETHO FROM BOREHOLE" +
-            " WHERE LATITUDE >= " + (currentLocation.X - radius).ToString(CultureInfo.InvariantCulture) + " AND LATITUDE <= " + (currentLocation.X + radius).ToString(CultureInfo.InvariantCulture)
-            + " AND LONGITUDE >= " + (currentLocation.Y - radius).ToString(CultureInfo.InvariantCulture) + " AND LONGITUDE <= " + (currentLocation.Y + radius).ToString(CultureInfo.InvariantCulture);
-            Debug.Log("Jupiter SQL: " + sql);
+                " WHERE LATITUDE >= " + (currentLocation.X - radius).ToString(CultureInfo.InvariantCulture) + 
+                " AND LATITUDE <= " + (currentLocation.X + radius).ToString(CultureInfo.InvariantCulture) + 
+                " AND LONGITUDE >= " + (currentLocation.Y - radius).ToString(CultureInfo.InvariantCulture) +
+                " AND LONGITUDE <= " + (currentLocation.Y + radius).ToString(CultureInfo.InvariantCulture);
+            Debug.Log("Jupiter Boringer SQL: " + sql);
             selectResult = jupiterClient.select(sql);
         }
         catch (System.ServiceModel.CommunicationException e)
@@ -156,6 +158,7 @@ class JupiterDatabase : ProxyDatabase
         try
         {
             String sql = "SELECT SCREENNO, INTAKENO, TOP, BOTTOM, DIAMETER, UNIT FROM SCREEN WHERE BOREHOLENO = '" + boreholeNo + "'";
+            Debug.Log("Jupiter Filtrer SQL: " + sql);
             selectResult = jupiterClient.select(sql);
         }
         catch (System.ServiceModel.CommunicationException e)
@@ -243,6 +246,7 @@ class JupiterDatabase : ProxyDatabase
         try
         {
             String sql = "SELECT TIMEOFMEAS, WATERLEVEL, REFPOINT FROM WATLEVEL WHERE BOREHOLENO = '" + boreholeNo + "' AND INTAKENO =" + intakeNo;
+            Debug.Log("Jupiter Vand Måling SQL: " + sql);
             selectResult = jupiterClient.select(sql);
         }
         catch (System.ServiceModel.CommunicationException e)
@@ -317,6 +321,7 @@ class JupiterDatabase : ProxyDatabase
         try
         {
             String sql = "SELECT CODE, SHORTTEXT, LONGTEXT FROM CODE WHERE CODETYPE = 17";
+            Debug.Log("Jupiter Borings Typer SQL: " + sql);
             selectResult = jupiterClient.select(sql);
         }
         catch (System.ServiceModel.CommunicationException e)
@@ -389,6 +394,7 @@ class JupiterDatabase : ProxyDatabase
         try
         {
             String sql = "SELECT CODE, LONGTEXT FROM CODE WHERE CODETYPE = 97";
+            Debug.Log("Jupiter Reference Punkter SQL: " + sql);
             selectResult = jupiterClient.select(sql);
         }
         catch (System.ServiceModel.CommunicationException e)
@@ -458,6 +464,7 @@ class JupiterDatabase : ProxyDatabase
         try
         {
             String sql = "SELECT CODE, LONGTEXT FROM CODE WHERE CODETYPE = 63";
+            Debug.Log("Jupiter Lokation Kvaliteter SQL: " + sql);
             selectResult = jupiterClient.select(sql);
         }
         catch (System.ServiceModel.CommunicationException e)
@@ -527,6 +534,7 @@ class JupiterDatabase : ProxyDatabase
         try
         {
             String sql = "SELECT CODE, LONGTEXT FROM CODE WHERE CODETYPE = 64";
+            Debug.Log("Jupiter Lokation Metoder SQL: " + sql);
             selectResult = jupiterClient.select(sql);
         }
         catch (System.ServiceModel.CommunicationException e)

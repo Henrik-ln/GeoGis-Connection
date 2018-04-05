@@ -270,12 +270,12 @@ public class LatLngUTMConverter
                 a = 6378135;
                 eccSquared = 0.006694318;
                 break;
-            case "ED50":
+            case "ED50":                            //espg: 4230
                 a = 6378388;
                 eccSquared = 0.00672267;
                 break; // International Ellipsoid
             case "WGS 84":
-            case "EUREF89": // Max deviation from WGS 84 is 40 cm/km see http://ocq.dk/euref89 (in danish)
+            case "EUREF89": // Max deviation from WGS 84 is 40 cm/km see http://ocq.dk/euref89 (in danish) //25832 epsg:25832
             case "ETRS89": // Same as EUREF89 
                 a = 6378137;
                 eccSquared = 0.00669438;
